@@ -1,17 +1,26 @@
 {
-  "name": "nuxt-app",
-  "private": true,
+  "name": "qcrow",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "build": "nuxt build",
-    "dev": "nuxt dev",
-    "generate": "nuxt generate",
-    "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs:dev": "vitepress dev",
+    "docs:build": "vitepress build",
+    "docs:preview": "vitepress preview"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xplorebits/qcrow.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xplorebits/qcrow/issues"
+  },
+  "homepage": "https://github.com/xplorebits/qcrow#readme",
   "devDependencies": {
-    "@nuxt/devtools": "latest",
-    "@nuxthq/ui": "^2.7.0",
-    "@types/node": "^18.17.1",
-    "nuxt": "^3.6.5"
+    "vitepress": "^1.0.0-beta.7"
   }
 }
