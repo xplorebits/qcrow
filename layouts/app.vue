@@ -6,28 +6,40 @@
           <logo />
 
           <UInput
+            v-model="inputSearch"
             :disabled="!storeProject.isReady"
             icon="i-heroicons-magnifying-glass-20-solid"
             placeholder="Search Projects"
-            class="sticky top-0"
           />
 
-          <div class="z-10 space-y-2 sticky top-0 p-2 bg-zinc-900">
-            <p class="text-xs text-left">Results 23</p>
-            <UButton
-              class="mt-1"
-              size="xs"
-              variant="outline"
-              color="primary"
-              label="Clear Search"
-              block
-            />
+          <div v-if="inputSearch" class="z-10 space-y-2 sticky top-0 bg-zinc-900">
+            <div
+              class="flex items-center gap-1 h-full border pl-2 rounded-md border-yellow-300"
+            >
+              <p class="grow text-sm text-yellow-500">
+                Results {{ searchProjects.length }}
+              </p>
+              <UButton
+                icon="i-heroicons-x-mark"
+                size="sm"
+                color="yellow"
+                variant="ghost"
+                trailing
+                @click="() => (inputSearch = '')"
+              />
+            </div>
           </div>
 
           <UVerticalNavigation
-            v-if="storeProject.isReady"
+            v-if="storeProject.isReady && inputSearch"
             size="lg"
-            :links="links"
+            :links="searchProjects"
+            class="z-5"
+          />
+          <UVerticalNavigation
+            v-else-if="storeProject.isReady"
+            size="lg"
+            :links="projects"
             class="z-5"
           />
           <UVerticalNavigation
@@ -49,7 +61,7 @@
           </UVerticalNavigation>
 
           <UButton
-            v-if="storeProject.isReady"
+            v-if="storeProject.isReady && !inputSearch"
             icon="i-heroicons-plus"
             color="primary"
             variant="outline"
@@ -73,13 +85,20 @@
 import { useProject } from "@/store/project";
 const storeProject = useProject();
 
+const inputSearch = ref("");
 const refCreateProject = ref(null);
 
-const links = computed(() => {
+const projects = computed(() => {
   return (storeProject.getProjects || []).map((x) => ({
     label: x.name,
     to: `/project/${x._id}`,
   }));
+});
+
+const searchProjects = computed(() => {
+  return unref(projects).filter((x) =>
+    (x.label || "").toLowerCase().includes(unref(inputSearch).toLowerCase())
+  );
 });
 
 const onLoading = function () {
