@@ -9,9 +9,19 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
+    "@iconify-json/bi": "^1.1.18",
     "@nuxt/devtools": "latest",
     "@nuxthq/ui": "^2.7.0",
+    "@sidebase/nuxt-auth": "^0.6.0-beta.4",
     "@types/node": "^18.17.1",
     "nuxt": "^3.6.5"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "next-auth": "4.21.1",
+    "nuxt-mongoose": "^0.0.9",
+    "uuid": "^9.0.0",
+    "vee-validate": "^4.11.1",
+    "yup": "^1.2.0"
   }
 }
