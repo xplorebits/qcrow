@@ -32,14 +32,18 @@
 
           <UVerticalNavigation
             v-if="storeProject.isReady && inputSearch"
-            size="lg"
             :links="searchProjects"
+            size="lg"
             class="z-5"
           />
           <UVerticalNavigation
             v-else-if="storeProject.isReady"
-            size="lg"
             :links="projects"
+            :ui="{
+              active:
+                'text-green-800 dark:text-white before:bg-green-700 dark:before:bg-green-800',
+            }"
+            size="lg"
             class="z-5"
           />
           <UVerticalNavigation

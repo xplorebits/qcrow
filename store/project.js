@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import addProject from './actions/project/addProject'
 import fetchProjects from './actions/project/fetchProjects'
+import deleteProject from './actions/project/deleteProject'
 
 export const useProject = defineStore('projects', {
   // arrow function recommended for full type inference
@@ -17,6 +18,7 @@ export const useProject = defineStore('projects', {
   },
   actions: {
     addProject,
-    fetchProjects
+    fetchProjects,
+    deleteProject
   }
 })
