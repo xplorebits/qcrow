@@ -1,8 +1,10 @@
-export const defineAdminHandler = (handler) => defineEventHandler(async (event) => {
-  try {
-    const apiKey = event.node.req.headers['api-key'] || ''
+import { getServerSession } from '#auth'
 
-    if (!await Admin.findOne({ apiKey })) {
+export const defineUserHandler = (handler) => defineEventHandler(async (event) => {
+  try {
+    const session = await getServerSession(event)
+    
+    if (!session) {
       return createError({ statusCode: 403, statusMessage: 'Unauthorized' })
     }
 
