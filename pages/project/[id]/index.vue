@@ -14,8 +14,27 @@
           />
         </UDropdown>
       </template>
-      <template v-slot:body> hello </template>
+      <template v-slot:body>
+        <div class="space-y-2">
+          <UTable
+            :columns="manifestColumns"
+            :rows="manifests"
+            :sort="{ column: 'title' }"
+          />
+
+          <UButton
+            icon="i-heroicons-plus"
+            size="sm"
+            color="primary"
+            variant="soft"
+            label="Create New Manifest"
+            @click="() => refCreateManifest.open()"
+          />
+        </div>
+      </template>
     </ProjectPageContainer>
+
+    <modals-create-manifest ref="refCreateManifest" />
   </NuxtLayout>
 </template>
 
@@ -25,6 +44,42 @@ import ProjectPageContainer from "@/components/ProjectPageContainer.vue";
 
 const storeProject = useProject();
 const projectId = useRoute().params?.id || "";
+
+const manifestColumns = [
+  {
+    key: "name",
+    label: "Name",
+    sortable: true,
+  },
+  {
+    key: "countTestCases",
+    label: "Total Test Cases",
+    sortable: true,
+  },
+  {
+    key: "createdBy",
+    label: "Created By",
+    sortable: true,
+    direction: "desc",
+  },
+  {
+    key: "lastModified",
+    label: "Last Modified",
+    sortable: true,
+    direction: "desc",
+  },
+];
+
+const refCreateManifest = ref(null);
+const manifests = [
+  /* {
+    id: 1,
+    name: "Lindsay Walton",
+    countTestCases: 0,
+    createdBy: "lindsay.walton",
+    lastModified: "",
+  }, */
+];
 
 const project = computed(() => {
   return storeProject.getProjects.find((x) => x._id === projectId) || {};

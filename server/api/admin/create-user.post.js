@@ -7,7 +7,7 @@ export default defineAdminHandler(async (event) => {
     if (!data?.username) {
       return createError({ statusCode: '400', statusMessage: 'Bad Request' })
     }
-    const { password, username, ...updates } = data || {}
+    let { password, username, ...updates } = data || {}
 
     const duplicateUser = await User.findOne({ username })
 
