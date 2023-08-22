@@ -125,9 +125,7 @@ const props = defineProps({
   },
 });
 
-const searchedTestCases = ref(null)
 const searchValue = ref("")
-
 const layout = ref([
   // { x: 0, y: 0, w: 1, h: 3, i: "0" },
 ]);
@@ -142,16 +140,14 @@ const sortByIndex = function() {
   layout.value.sort((a, b) => a.y - b.y);
 }
 
-watch(() => searchValue.value, (value) => {
-  if(value) {
-    searchedTestCases.value = props.testCases.filter((x) =>
+const searchedTestCases = computed(() => {
+  return searchValue.value
+   ? props.testCases.filter((x) =>
       x.title
       .toLowerCase()
-      .includes(value.toLowerCase())
+      .includes(searchValue.value.toLowerCase())
     )
-  } else {
-    searchedTestCases.value = null
-  }
+   : null 
 })
 
 watch(
