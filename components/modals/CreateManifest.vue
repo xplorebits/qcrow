@@ -12,7 +12,7 @@
       <template #footer>
         <div class="flex items-center gap-3">
           <div class="grow" />
-          <UButton :disabled="isSubmitting" color="white" @click="() => (isOpen = false)">
+          <UButton :disabled="isSubmitting" color="white" @click="close">
             Close
           </UButton>
           <UButton :disabled="isSubmitting" :loading="isSubmitting" @click="onSubmit">
@@ -67,6 +67,7 @@ const open = function () {
 };
 
 const close = function () {
+  selection.value = []
   isOpen.value = false;
 };
 
@@ -75,8 +76,6 @@ const onSelectTestCase = function (res) {
   if (res.result) {
     if (ti < 0) {
       selection.value.push(res.data);
-    } else {
-      selection.value.splice(ti, 1);
     }
   } else {
     if (ti > -1) {
