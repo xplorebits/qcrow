@@ -72,10 +72,11 @@ const close = function () {
 
 const onSelectTestCase = function (res) {
   const ti = unref(selection).findIndex((x) => x.id === res.data.id);
-
   if (res.result) {
     if (ti < 0) {
       selection.value.push(res.data);
+    } else {
+      selection.value.splice(ti, 1);
     }
   } else {
     if (ti > -1) {
