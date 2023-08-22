@@ -3,7 +3,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ['@nuxthq/ui', '@sidebase/nuxt-auth', 'nuxt-mongoose', '@pinia/nuxt'],
   ui: {
-    icons: ['bi']
+    icons: ['bi', 'icon-park-outline']
   },
   auth: {
     globalAppMiddleware: true,
