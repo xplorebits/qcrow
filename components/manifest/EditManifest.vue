@@ -9,6 +9,7 @@
         :is-resizable="false"
         :vertical-compact="true"
         :use-css-transforms="true"
+        @layout-updated="sortByIndex"
       >
         <grid-item
           v-for="item in layout"
@@ -50,6 +51,7 @@
     <div class="relative col-span-4 border-l border-gray-800">
       <div class="absolute top-0 right-0 left-0 h-12 pl-3 pr-1">
         <UInput
+          v-model="searchValue"
           icon="i-heroicons-magnifying-glass-20-solid"
           size="lg"
           color="white"
@@ -62,6 +64,7 @@
         class="absolute top-12 right-0 bottom-0 left-0 overflow-y-auto pl-3 pr-1 py-2 space-y-2"
       >
         <div
+          v-if="!searchValue"
           v-for="item in testCases"
           :key="`edit-manifest-selectable-test-case-${item.id}`"
           :class="[
@@ -72,7 +75,29 @@
           ]"
         >
           <UCheckbox
-            :checked="selection.findIndex((x) => x.id === 'test') > -1"
+            :checked="selection.findIndex((x) => x.id === item.id) > -1"
+            :name="item.id"
+            :label="item.title"
+            @change="(e) => emits('select', { result: e.target.checked, data: item })"
+          />
+        </div>
+      </div>
+      <div
+        v-if="searchValue"
+        class="absolute top-12 right-0 bottom-0 left-0 overflow-y-auto pl-3 pr-1 py-2 space-y-2"
+      >
+        <div
+          v-for="item in searchedTestCases"
+          :key="`edit-manifest-selectable-test-case-${item.id}`"
+          :class="[
+            selection.findIndex((x) => x.id === item.id) > -1
+              ? 'bg-primary-900'
+              : 'bg-transparent',
+            'flex items-center gap-3 h-12 ring-1 ring-gray-200 dark:ring-gray-800 rounded-md px-3',
+          ]"
+        >
+          <UCheckbox
+            :checked="selection.findIndex((x) => x.id === item.id) > -1"
             :name="item.id"
             :label="item.title"
             @change="(e) => emits('select', { result: e.target.checked, data: item })"
@@ -100,6 +125,7 @@ const props = defineProps({
   },
 });
 
+const searchValue = ref("")
 const layout = ref([
   // { x: 0, y: 0, w: 1, h: 3, i: "0" },
 ]);
@@ -109,6 +135,20 @@ const syncLayoutY = function () {
     layout.value[index].y = index * 3;
   }
 };
+
+const sortByIndex = function() {
+  layout.value.sort((a, b) => a.y - b.y);
+}
+
+const searchedTestCases = computed(() => {
+  return searchValue.value
+   ? props.testCases.filter((x) =>
+      x.title
+      .toLowerCase()
+      .includes(searchValue.value.toLowerCase())
+    )
+   : null 
+})
 
 watch(
   () => props.selection,
@@ -134,6 +174,6 @@ watch(
 
     syncLayoutY();
   },
-  { deep: true }
+  { deep: true, immediate: true }
 );
 </script>
