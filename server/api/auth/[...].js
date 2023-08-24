@@ -15,8 +15,7 @@ export default NuxtAuthHandler({
             const res = await User.findOne({ username: credentials.username })
 
             if (res?._id && await useNitroApp().verifyPassword(credentials.password || '', res.hash)) {
-              const { _id, hash, ...profile } = res
-              return profile
+              return { username: res.username }
             }
 
             return null

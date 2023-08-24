@@ -20,7 +20,17 @@
             :columns="manifestColumns"
             :rows="manifests"
             :sort="{ column: 'title' }"
-          />
+          >
+            <template #actions-data="{ row }">
+              <UDropdown :items="rowActions(row)">
+                <UButton
+                  color="gray"
+                  variant="ghost"
+                  icon="i-heroicons-ellipsis-horizontal-20-solid"
+                />
+              </UDropdown>
+            </template>
+          </UTable>
 
           <UButton
             icon="i-heroicons-plus"
@@ -40,10 +50,26 @@
 
 <script setup>
 import { useProject } from "@/store/project";
+import { useManifest } from "@/store/manifest";
 import ProjectPageContainer from "@/components/ProjectPageContainer.vue";
 
 const storeProject = useProject();
+const storeManifest = useManifest();
 const projectId = useRoute().params?.id || "";
+
+const onDeleteManifest = function (manifestId) {
+  storeManifest.deleteManifest(projectId, manifestId);
+};
+
+const rowActions = (row) => [
+  [
+    {
+      label: "Delete",
+      icon: "i-heroicons-trash-20-solid",
+      click: () => onDeleteManifest(row.id),
+    },
+  ],
+];
 
 const manifestColumns = [
   {
@@ -68,18 +94,27 @@ const manifestColumns = [
     sortable: true,
     direction: "desc",
   },
+  {
+    key: "actions",
+    label: "Actions",
+    sortable: false,
+  },
 ];
 
 const refCreateManifest = ref(null);
-const manifests = [
-  /* {
+/* const manifests = [
+  {
     id: 1,
     name: "Lindsay Walton",
     countTestCases: 0,
     createdBy: "lindsay.walton",
     lastModified: "",
-  }, */
-];
+  }, 
+];*/
+
+const manifests = computed(() => {
+  return (storeManifest.getManifest?.[projectId] || []).map((x) => ({ id: x._id, ...x }));
+});
 
 const project = computed(() => {
   return storeProject.getProjects.find((x) => x._id === projectId) || {};
@@ -122,4 +157,8 @@ const menuProject = [
     },
   ],
 ];
+
+onMounted(() => {
+  storeManifest.fetchManifest(useRoute().params.id);
+});
 </script>

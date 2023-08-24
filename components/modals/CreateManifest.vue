@@ -5,7 +5,7 @@
         <div class="flex items-center gap-3 h-full">
           Create Manifest
 
-          <UInput v-bind="name" size="lg" placeholder="Enter project name" />
+          <UInput v-bind="name" size="lg" placeholder="Enter manifest name" />
 
           <div class="grow" />
           <p v-if="name.value" class="text-sm text-zinc-600">{{ name.value }}</p>
@@ -32,11 +32,13 @@ import { useForm } from "vee-validate";
 import * as yup from "yup";
 import { useProject } from "@/store/project";
 import { useTestCase } from "@/store/testCase";
+import { useManifest } from "@/store/manifest";
 
 const isRetry = ref(false);
 const isOpen = ref(false);
 const storeProejct = useProject();
 const storeTestCase = useTestCase();
+const storeManifest = useManifest();
 
 const { values, meta, handleSubmit, defineInputBinds, resetForm, isSubmitting } = useForm(
   {
@@ -98,8 +100,11 @@ const onSubmit = handleSubmit((values) => {
       isRetry.value = true;
     }
 
-    storeProejct
-      .addProject(values)
+    storeManifest
+      .createManifest(
+        { name: values.name, selection: selection.value },
+        useRoute().params.id
+      )
       .then(() => {
         close();
       })

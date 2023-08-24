@@ -8,6 +8,8 @@ export const defineUserHandler = (handler) => defineEventHandler(async (event) =
       return createError({ statusCode: 403, statusMessage: 'Unauthorized' })
     }
 
+    event.context['session'] = session
+
     return await handler(event)
   } catch (error) {
     console.error(error)
