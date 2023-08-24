@@ -51,7 +51,7 @@
     <div class="relative col-span-4 border-l border-gray-800">
       <div class="absolute top-0 right-0 left-0 h-12 pl-3 pr-1">
         <UInput
-          v-model="searchValue"
+          v-model="inputSearch"
           icon="i-heroicons-magnifying-glass-20-solid"
           size="lg"
           color="white"
@@ -60,55 +60,67 @@
           :trailing="false"
         />
       </div>
-      <div
-        class="absolute top-12 right-0 bottom-0 left-0 overflow-y-auto pl-3 pr-1 py-2 space-y-2"
-      >
-        <div
-          v-if="!searchValue"
-          v-for="item in testCases"
-          :key="`edit-manifest-selectable-test-case-${item.id}`"
-          :class="[
-            selection.findIndex((x) => x.id === item.id) > -1
-              ? 'bg-primary-900'
-              : 'bg-transparent',
-            'flex items-center gap-3 h-12 ring-1 ring-gray-200 dark:ring-gray-800 rounded-md px-3',
-          ]"
-        >
-          <UCheckbox
-            :checked="selection.findIndex((x) => x.id === item.id) > -1"
-            :name="item.id"
-            :label="item.title"
-            @change="(e) => emits('select', { result: e.target.checked, data: item })"
-          />
+      <div class="absolute top-12 right-0 bottom-0 left-0 overflow-y-auto pl-3 pr-1">
+        <div class="py-2">
+          <div v-if="inputSearch" class="z-10 sticky top-0 bg-zinc-900">
+            <div
+              class="flex items-center gap-1 h-full border pl-2 rounded-md border-yellow-300"
+            >
+              <p class="grow text-sm text-yellow-500">
+                Results {{ searchedTestCases.length }}
+              </p>
+              <UButton
+                icon="i-heroicons-x-mark"
+                size="sm"
+                color="yellow"
+                variant="ghost"
+                trailing
+                @click="() => (inputSearch = '')"
+              />
+            </div>
+          </div>
+          <div class="space-y-2">
+            <div
+              v-for="item in inputSearch ? searchedTestCases : storeTestCase.getTestCases"
+              :key="`edit-manifest-selectable-test-case-${item._id}`"
+              :class="[
+                selection.findIndex((x) => x._id === item._id) > -1
+                  ? 'bg-primary-900'
+                  : 'bg-transparent',
+                'flex items-center gap-3 h-12 ring-1 ring-gray-200 dark:ring-gray-800 rounded-md px-3',
+              ]"
+            >
+              <UCheckbox
+                :checked="selection.findIndex((x) => x._id === item._id) > -1"
+                :name="item._id"
+                :label="item.title"
+                @change="(e) => emits('select', { result: e.target.checked, data: item })"
+              />
+            </div>
+          </div>
         </div>
-      </div>
-      <div
-        v-if="searchValue"
-        class="absolute top-12 right-0 bottom-0 left-0 overflow-y-auto pl-3 pr-1 py-2 space-y-2"
-      >
-        <div
-          v-for="item in searchedTestCases"
-          :key="`edit-manifest-selectable-test-case-${item.id}`"
-          :class="[
-            selection.findIndex((x) => x.id === item.id) > -1
-              ? 'bg-primary-900'
-              : 'bg-transparent',
-            'flex items-center gap-3 h-12 ring-1 ring-gray-200 dark:ring-gray-800 rounded-md px-3',
-          ]"
-        >
-          <UCheckbox
-            :checked="selection.findIndex((x) => x.id === item.id) > -1"
-            :name="item.id"
-            :label="item.title"
-            @change="(e) => emits('select', { result: e.target.checked, data: item })"
-          />
-        </div>
+
+        <UButton
+          v-if="!inputSearch"
+          icon="i-heroicons-plus"
+          color="primary"
+          variant="outline"
+          block
+          label="New Test Case"
+          class="sticky bottom-0 bg-zinc-900"
+          @click="() => refCreateTestCase.open()"
+        />
       </div>
     </div>
+
+    <modals-create-test-case ref="refCreateTestCase" />
   </div>
 </template>
 
 <script setup>
+import { useTestCase } from "@/store/testCase";
+
+const storeTestCase = useTestCase();
 const emits = defineEmits(["select"]);
 const props = defineProps({
   selection: {
@@ -117,15 +129,10 @@ const props = defineProps({
       return [];
     },
   },
-  testCases: {
-    type: Object,
-    default: () => {
-      return [];
-    },
-  },
 });
 
-const searchValue = ref("")
+const refCreateTestCase = ref(null);
+const inputSearch = ref("");
 const layout = ref([
   // { x: 0, y: 0, w: 1, h: 3, i: "0" },
 ]);
@@ -136,37 +143,35 @@ const syncLayoutY = function () {
   }
 };
 
-const sortByIndex = function() {
+const sortByIndex = function () {
   layout.value.sort((a, b) => a.y - b.y);
-}
+};
 
 const searchedTestCases = computed(() => {
-  return searchValue.value
-   ? props.testCases.filter((x) =>
-      x.title
-      .toLowerCase()
-      .includes(searchValue.value.toLowerCase())
-    )
-   : null 
-})
+  return inputSearch.value
+    ? storeTestCase.getTestCases.filter((x) =>
+        x.title.toLowerCase().includes(inputSearch.value.toLowerCase())
+      )
+    : null;
+});
 
 watch(
   () => props.selection,
   (value) => {
     unref(layout).forEach((item, index) => {
-      if (!value.some((x) => x.id === item.data.id)) {
+      if (!value.some((x) => x._id === item.data._id)) {
         layout.value.splice(index, 1);
       }
     });
 
     value.forEach((item) => {
-      if (!unref(layout).some((x) => x.data.id === item.id)) {
+      if (!unref(layout).some((x) => x.data._id === item._id)) {
         layout.value.push({
           x: 0,
           y: layout.value.length * 3,
           w: 1,
           h: 3,
-          i: item.id,
+          i: item._id,
           data: item,
         });
       }
@@ -176,4 +181,8 @@ watch(
   },
   { deep: true, immediate: true }
 );
+
+onMounted(() => {
+  storeTestCase.fetchTestCases();
+});
 </script>

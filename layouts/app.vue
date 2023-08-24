@@ -90,6 +90,7 @@ import { useProject } from "@/store/project";
 const storeProject = useProject();
 
 const inputSearch = ref("");
+const selectionProject = ref("");
 const refCreateProject = ref(null);
 
 const projects = computed(() => {
@@ -98,6 +99,18 @@ const projects = computed(() => {
     to: `/project/${x._id}`,
   }));
 });
+
+watch(
+  () => storeProject.isReady,
+  (value) => {
+    if (value) {
+      const defaultProject = projects.value?.[0] || undefined;
+      if (defaultProject) {
+        useRouter().replace({ path: defaultProject.to });
+      }
+    }
+  }
+);
 
 const searchProjects = computed(() => {
   return unref(projects).filter((x) =>
@@ -125,3 +138,11 @@ onMounted(() => {
   }
 });
 </script>
+
+<style>
+.no-tailwind *,
+.no-tailwind *::before,
+.no-tailwind *::after {
+  all: revert;
+}
+</style>

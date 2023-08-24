@@ -1,7 +1,5 @@
 <template>
-  <NuxtLayout name="app">
-    <UContainer>Content</UContainer>
-  </NuxtLayout>
+  <NuxtLayout name="app"> </NuxtLayout>
 </template>
 
 <script setup>

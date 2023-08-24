@@ -10,6 +10,7 @@ export const defineUserHandler = (handler) => defineEventHandler(async (event) =
 
     return await handler(event)
   } catch (error) {
+    console.error(error)
     return createError({ statusCode: 500, statusMessage: 'Internal Error'})
   }
 })

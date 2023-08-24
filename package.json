@@ -19,7 +19,10 @@
   },
   "dependencies": {
     "@pinia/nuxt": "^0.4.11",
+    "@vavt/md-editor-extension": "^3.0.0",
     "bcrypt": "^5.1.0",
+    "markdown-it": "^13.0.1",
+    "md-editor-v3": "^4.3.0",
     "next-auth": "4.21.1",
     "nuxt-mongoose": "^0.0.9",
     "pinia": "^2.1.6",
