@@ -138,11 +138,3 @@ onMounted(() => {
   }
 });
 </script>
-
-<style>
-.no-tailwind *,
-.no-tailwind *::before,
-.no-tailwind *::after {
-  all: revert;
-}
-</style>

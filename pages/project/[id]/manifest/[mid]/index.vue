@@ -16,7 +16,9 @@
         </div>
 
         <div class="grow" />
-        <UButton icon="i-bi-play-circle" size="xs" variant="solid"> Run </UButton>
+        <UButton icon="i-bi-play-circle" size="xs" variant="solid" @click="onClickRun">
+          Run
+        </UButton>
         <UDropdown
           :items="pageActions"
           :ui="{ item: { disabled: 'cursor-text select-text' } }"
@@ -224,5 +226,10 @@ const goBack = function () {
 
 const onClickNavTreeItem = function (item) {
   return useRouter().push({ path: item.to });
+};
+
+const onClickRun = function () {
+  const url = useRouter().resolve({ path: "/run/sdfasdf-safasdf-342ksdfaf-asdfasdf" });
+  window.open(url.fullPath, "_blank");
 };
 </script>
