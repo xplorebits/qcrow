@@ -21,6 +21,13 @@
             :rows="manifests"
             :sort="{ column: 'title' }"
           >
+            <template #name-data="{ row }">
+              <NuxtLink :to="`/project/${projectId}/manifest/${row.id}`">
+                <UButton variant="link" icon="i-bi-arrow-right-short" trailing>
+                  {{ row.name }}
+                </UButton>
+              </NuxtLink>
+            </template>
             <template #actions-data="{ row }">
               <UDropdown :items="rowActions(row)">
                 <UButton
