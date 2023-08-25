@@ -229,7 +229,14 @@ const onClickNavTreeItem = function (item) {
 };
 
 const onClickRun = function () {
-  const url = useRouter().resolve({ path: "/run/sdfasdf-safasdf-342ksdfaf-asdfasdf" });
-  window.open(url.fullPath, "_blank");
+  $fetch(`/api/project/ops/${projectId}/manifest/ops/${manifestId}/run`)
+    .then((token) => {
+      const url = useRouter().resolve({ path: `/run/${token}` });
+      window.open(url.fullPath, "_blank");
+    })
+    .catch((err) => {
+      alert(err.message);
+    })
+    .finally(() => {});
 };
 </script>
