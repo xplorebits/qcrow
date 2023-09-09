@@ -3,9 +3,14 @@
     <UCard>
       <template #header>
         <div class="flex items-center gap-3 h-full">
-          Create Manifest
+          {{ edit ? `${manifest.name}` : "Create Manifest" }}
 
-          <UInput v-bind="name" size="lg" placeholder="Enter manifest name" />
+          <UInput
+            v-if="!edit"
+            v-bind="name"
+            size="lg"
+            placeholder="Enter manifest name"
+          />
 
           <div class="grow" />
           <p v-if="name.value" class="text-sm text-zinc-600">{{ name.value }}</p>
@@ -18,7 +23,20 @@
         <div class="flex items-center gap-3">
           <div class="grow" />
           <UButton :disabled="isSubmitting" color="white" @click="close"> Close </UButton>
-          <UButton :disabled="isSubmitting" :loading="isSubmitting" @click="onSubmit">
+          <UButton
+            v-if="edit"
+            :disabled="isSubmitting"
+            :loading="isSubmitting"
+            @click="onClickSave"
+          >
+            Save
+          </UButton>
+          <UButton
+            v-else
+            :disabled="isSubmitting"
+            :loading="isSubmitting"
+            @click="onSubmit"
+          >
             Create
           </UButton>
         </div>
@@ -34,8 +52,28 @@ import { useProject } from "@/store/project";
 import { useTestCase } from "@/store/testCase";
 import { useManifest } from "@/store/manifest";
 
+const props = defineProps({
+  edit: {
+    type: Boolean,
+    default: false,
+  },
+  manifest: {
+    type: Object,
+    default: () => {
+      return {};
+    },
+  },
+  project: {
+    type: Object,
+    default: () => {
+      return {};
+    },
+  },
+});
+
 const isRetry = ref(false);
 const isOpen = ref(false);
+const selection = ref([]);
 const storeProejct = useProject();
 const storeTestCase = useTestCase();
 const storeManifest = useManifest();
@@ -54,13 +92,16 @@ const { values, meta, handleSubmit, defineInputBinds, resetForm, isSubmitting } 
 watch(isOpen, (value) => {
   if (!value) {
     resetForm();
+    selection.value = [];
     isRetry.value = false;
+  } else {
+    (props.manifest?.testCases || []).forEach((item) => {
+      selection.value.push(item);
+    });
   }
 });
 
 const name = defineInputBinds("name");
-
-const selection = ref([]);
 
 /* const testCases = ref([
   // { id: "auth-login-success", title: "Successfull Login" }
@@ -92,6 +133,21 @@ const onSelectTestCase = function (res) {
       selection.value.splice(ti, 1);
     }
   }
+};
+
+const onClickSave = function () {
+  storeManifest
+    .updateManifest(
+      { testCases: selection.value },
+      props.project?._id,
+      props.manifest?._id
+    )
+    .then(() => {
+      close();
+    })
+    .catch((err) => {
+      alert(err.message);
+    });
 };
 
 const onSubmit = handleSubmit((values) => {

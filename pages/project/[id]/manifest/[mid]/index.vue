@@ -122,12 +122,39 @@
           :rows="manifest.testCases"
           :sort="{ column: 'title' }"
         >
-          <template #name-data="{ row }">
-            <NuxtLink :to="`/project/${projectId}/manifest/${row.id}`">
-              <UButton variant="link" icon="i-bi-arrow-right-short" trailing>
-                {{ row.name }}
-              </UButton>
-            </NuxtLink>
+          <template #description-data="{ row }">
+            <Popper hover placement="right">
+              <UButton variant="ghost"> Hover Me </UButton>
+              <template #content>
+                <div
+                  class="w-auto bg-zinc-900 p-2 shadow-xl border border-green-700 rounded-md"
+                >
+                  {{ row.description }}
+                </div>
+              </template>
+            </Popper>
+          </template>
+          <template #testSteps-data="{ row }">
+            <Popper hover placement="right">
+              <UButton variant="ghost"> Hover Me </UButton>
+              <template #content>
+                <div
+                  class="w-auto bg-zinc-900 p-2 shadow-xl border border-green-700 rounded-md"
+                  v-html="$md.render(row?.testSteps || '')"
+                />
+              </template>
+            </Popper>
+          </template>
+          <template #expectedResult-data="{ row }">
+            <Popper hover placement="right">
+              <UButton variant="ghost"> Hover Me </UButton>
+              <template #content>
+                <div
+                  class="w-auto bg-zinc-900 p-2 shadow-xl border border-green-700 rounded-md"
+                  v-html="$md.render(row?.expectedResult || '')"
+                />
+              </template>
+            </Popper>
           </template>
           <template #actions-data="{ row }">
             <UDropdown :items="rowActions(row)">
@@ -139,8 +166,23 @@
             </UDropdown>
           </template>
         </UTable>
+
+        <UButton
+          size="sm"
+          color="primary"
+          variant="soft"
+          label="Add/Remove Test Case"
+          @click="() => refCreateManifest.open()"
+        />
       </template>
     </ProjectPageContainer>
+
+    <modals-create-manifest
+      :project="project"
+      :manifest="manifest"
+      edit
+      ref="refCreateManifest"
+    />
   </NuxtLayout>
 </template>
 
@@ -155,6 +197,9 @@ const manifestId = useRoute().params.mid;
 const storeProject = useProject();
 const storeManifest = useManifest();
 const storeTestCase = useTestCase();
+
+const { $md } = useNuxtApp();
+const refCreateManifest = ref(null);
 
 const project = computed(() => {
   return storeProject.getProjects.find((x) => x._id === projectId) || {};
@@ -193,7 +238,7 @@ const manifestColumns = [
   },
   {
     key: "description",
-    label: "Total Test Cases",
+    label: "Description",
     sortable: false,
   },
   {

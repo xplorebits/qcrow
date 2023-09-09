@@ -49,7 +49,7 @@
       </div>
     </div>
     <div class="relative col-span-4 border-l border-gray-800">
-      <div class="absolute top-0 right-0 left-0 h-12 pl-3 pr-1">
+      <div class="absolute top-0 right-0 left-0 h-12 pl-3 pr-4">
         <UInput
           v-model="inputSearch"
           icon="i-heroicons-magnifying-glass-20-solid"
@@ -60,7 +60,7 @@
           :trailing="false"
         />
       </div>
-      <div class="absolute top-12 right-0 bottom-0 left-0 overflow-y-auto pl-3 pr-1">
+      <div class="absolute top-12 right-0 bottom-0 left-0 overflow-y-auto pl-3 pr-4">
         <div class="py-2">
           <div v-if="inputSearch" class="z-10 sticky top-0 bg-zinc-900">
             <div
@@ -79,7 +79,7 @@
               />
             </div>
           </div>
-          <div class="space-y-2">
+          <div class="space-y-2 pb-6">
             <div
               v-for="item in inputSearch ? searchedTestCases : storeTestCase.getTestCases"
               :key="`edit-manifest-selectable-test-case-${item._id}`"
@@ -87,15 +87,17 @@
                 selection.findIndex((x) => x._id === item._id) > -1
                   ? 'bg-primary-900'
                   : 'bg-transparent',
-                'flex items-center gap-3 h-12 ring-1 ring-gray-200 dark:ring-gray-800 rounded-md px-3',
+                'flex items-center gap-3 h-12 ring-1 ring-gray-200 dark:ring-gray-800 rounded-md px-3 cursor-pointer select-none',
               ]"
+              @click="
+                () =>
+                  emits('select', {
+                    result: !(selection.findIndex((x) => x._id === item._id) > -1),
+                    data: item,
+                  })
+              "
             >
-              <UCheckbox
-                :checked="selection.findIndex((x) => x._id === item._id) > -1"
-                :name="item._id"
-                :label="item.title"
-                @change="(e) => emits('select', { result: e.target.checked, data: item })"
-              />
+              {{ item.title }}
             </div>
           </div>
         </div>

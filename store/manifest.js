@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia'
 import createManifest from './actions/manifest/createManifest'
 import fetchManifest from './actions/manifest/fetchManifest'
-import ensureManifest from './actions/manifest/ensureManifest'
 import deleteManifest from './actions/manifest/deleteManifest'
+import updateManifest from './actions/manifest/updateManifest'
+import ensureManifest from './actions/manifest/ensureManifest'
 
 export const useManifest = defineStore('manifest-store', {
   // arrow function recommended for full type inference
@@ -21,6 +22,7 @@ export const useManifest = defineStore('manifest-store', {
     createManifest,
     fetchManifest,
     deleteManifest,
+    updateManifest,
     ensureManifest
   }
 })

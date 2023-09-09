@@ -30,6 +30,7 @@
     "uuid": "^9.0.0",
     "vee-validate": "^4.11.1",
     "vue3-grid-layout": "^1.0.0",
+    "vue3-popper": "^1.5.0",
     "yup": "^1.2.0"
   }
 }
